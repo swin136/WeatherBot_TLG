@@ -1,19 +1,26 @@
 import requests
 import datetime
-from config import telegram_bot_token, open_weather_token
+from config import telegram_bot_token, open_weather_token, allow_user_id 
 from main import get_city_coordinates
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
 
 
- 
+def is_tlg_user_allow(testuser):
+    result = False
+    if testuser in allow_user_id: result = True
+    return result 
+
+
+
 bot = Bot(token = telegram_bot_token)
 dp = Dispatcher(bot)
 
 @dp.message_handler(commands = ["start"])
 async def start_command(message: types.Message):
-    await message.reply("Привет! Напиши мне название города по-английски и я пришлю сводку погоды!")
+    if is_tlg_user_allow(message.chat.id):
+        await message.reply("Привет! Напиши мне название города по-английски и я пришлю сводку погоды!")
 
 
 
@@ -33,9 +40,11 @@ async def get_weather(message: types.Message):
          "Mist" : "Снег \U0001F328" 
     }
 
+    if not is_tlg_user_allow(message.chat.id): return
+
     locate_city = get_city_coordinates(message.text, open_weather_token)
     if locate_city[0] == None:
-        await message.reply("С названием Вашего города что-то не так!")
+        await message.reply("\U00002620 С названием Вашего города что-то не так! \U00002620")
 
     
     city = locate_city[0]
@@ -71,7 +80,7 @@ async def get_weather(message: types.Message):
               f"Влажность: {humidity} %\nДавление: {pressure} мм рт. ст\nВетер: {wind} м\с\n"
               f"Восход солнца: {sunrise_timestamp}\nЗакат солнца: {sunset_timestamp}\n"
               f"Длительность дня {length_of_the_day}\n"
-              f"[+] Хорошего дня!"
+              f"[+] Хорошего дня! \U0001F609"
               )
 
             
