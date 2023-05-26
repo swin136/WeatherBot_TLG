@@ -24,7 +24,6 @@ def get_weather(calc_lat, calc_lon, city, open_weather_token):
          "Mist" : "Снег \U0001F328" 
     }
 
-
     try:
         lat = calc_lat
         lon = calc_lon
