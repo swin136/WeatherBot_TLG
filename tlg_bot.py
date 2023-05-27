@@ -45,6 +45,7 @@ async def get_weather(message: types.Message):
     locate_city = get_city_coordinates(message.text, open_weather_token)
     if locate_city[0] == None:
         await message.reply("\U00002620 С названием Вашего города что-то не так! \U00002620")
+        return
 
     
     city = locate_city[0]
@@ -71,6 +72,8 @@ async def get_weather(message: types.Message):
         sunset_timestamp = datetime.datetime.fromtimestamp(data['sys']['sunset']) 
         length_of_the_day = datetime.datetime.fromtimestamp(data['sys']['sunset']) - datetime.datetime.fromtimestamp(data['sys']['sunrise']) 
 
+
+        # Вырезаем из названия словосочетание городский округ если есть
         if "городской округ" in city: frmt_city =(str(city).replace("городской округ", "")).strip()
         else: frmt_city = city
 
