@@ -6,17 +6,12 @@ from main import get_city_coordinates
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
-from pprint import pprint
-
-
-
-def GetCountryFlag(country : str):
-    result = flag_dict.get(country) 
-    if result == None: result = ""
-    return result
-
+#from pprint import pprint
 
 def is_tlg_user_allow(testuser):
+    """
+    Оперделяет есть ли юзверь в нашем списке
+    """
     result = False
     if testuser in allow_user_id: result = True
     return result 
