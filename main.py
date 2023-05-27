@@ -5,8 +5,8 @@ https://www.youtube.com/watch?v=fa1FUW1jLAE&t=909s
 
 import requests
 import datetime
-# from pprint import pprint
-from config import open_weather_token
+from pprint import pprint
+from config import open_weather_token, replace_flag_cities_UA 
 
 
 def get_weather(calc_lat, calc_lon, city, open_weather_token):
@@ -45,12 +45,16 @@ def get_weather(calc_lat, calc_lon, city, open_weather_token):
         sunrise_timestamp = datetime.datetime.fromtimestamp(data['sys']['sunrise']) 
         sunset_timestamp = datetime.datetime.fromtimestamp(data['sys']['sunset']) 
         length_of_the_day = datetime.datetime.fromtimestamp(data['sys']['sunset']) - datetime.datetime.fromtimestamp(data['sys']['sunrise']) 
+        country  = data['sys']['country']
 
         if "городской округ" in city: frmt_city =(str(city).replace("городской округ", "")).strip()
         else: frmt_city = city
 
+        # Замена UA - RU
+        if frmt_city in replace_flag_cities_UA: country = replace_flag_cities_UA[frmt_city]
+
         print(f"****** {datetime.datetime.now().strftime('%Y-%m-%d %H:%M')} ******\n"
-              f"[+] Погода в городе {frmt_city}\n"
+              f"[+] Погода в городе {frmt_city} {country}\n"
               f"Температура: {cur_temp} С° {wd}\n"
               f"Влажность: {humidity} %\nДавление: {pressure} мм рт. ст\nВетер: {wind} м\с\n"
               f"Восход солнца: {sunrise_timestamp}\nЗакат солнца: {sunset_timestamp}\n"
