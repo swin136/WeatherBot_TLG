@@ -29,7 +29,8 @@ dp = Dispatcher(bot)
 @dp.message_handler(commands = ["start"])
 async def start_command(message: types.Message):
     if is_tlg_user_allow(message.chat.id):
-        await message.reply("Привет! Напиши мне название города по-английски и я пришлю сводку погоды!")
+        await message.reply("Привет! Напиши мне название города по-английски" 
+                            " или по-русски и я пришлю сводку погоды!")
 
 
 
@@ -90,7 +91,7 @@ async def get_weather(message: types.Message):
         # Замена UA - RU
         if frmt_city in replace_flag_cities_UA: service_country = replace_flag_cities_UA[frmt_city]
         
-        
+
         
         flag = flag_dict.get(service_country)
         if flag == None: flag =""
