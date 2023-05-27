@@ -32,7 +32,7 @@ def get_weather(calc_lat, calc_lon, city, open_weather_token):
         )
        
         data = r.json()
-        #pprint(data)
+        pprint(data)
 
         weather_description = data['weather'][0]['main']
         if weather_description in code_to_smile: wd = code_to_smile[weather_description]
