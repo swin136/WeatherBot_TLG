@@ -1,10 +1,19 @@
 import requests
 import datetime
 from config import telegram_bot_token, open_weather_token, allow_user_id 
+from config import replace_flag_cities_UA, flag_dict
 from main import get_city_coordinates
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
+from pprint import pprint
+
+
+
+def GetCountryFlag(country : str):
+    result = flag_dict.get(country) 
+    if result == None: result = ""
+    return result
 
 
 def is_tlg_user_allow(testuser):
@@ -71,14 +80,23 @@ async def get_weather(message: types.Message):
         sunrise_timestamp = datetime.datetime.fromtimestamp(data['sys']['sunrise']) 
         sunset_timestamp = datetime.datetime.fromtimestamp(data['sys']['sunset']) 
         length_of_the_day = datetime.datetime.fromtimestamp(data['sys']['sunset']) - datetime.datetime.fromtimestamp(data['sys']['sunrise']) 
+        service_country  = data['sys']['country']
 
 
         # Вырезаем из названия словосочетание городский округ если есть
         if "городской округ" in city: frmt_city =(str(city).replace("городской округ", "")).strip()
         else: frmt_city = city
 
+        # Замена UA - RU
+        if frmt_city in replace_flag_cities_UA: service_country = replace_flag_cities_UA[frmt_city]
+        
+        
+        
+        flag = flag_dict.get(service_country)
+        if flag == None: flag =""
+
         await message.reply(f"****** {datetime.datetime.now().strftime('%Y-%m-%d %H:%M')} ******\n"
-              f"[+] Погода в городе {frmt_city}\n"
+              f"[+] Погода в городе {frmt_city} {flag}\n"
               f"Температура: {cur_temp} С° {wd}\n"
               f"Влажность: {humidity} %\nДавление: {pressure} мм рт. ст\nВетер: {wind} м\с\n"
               f"Восход солнца: {sunrise_timestamp}\nЗакат солнца: {sunset_timestamp}\n"
@@ -88,7 +106,7 @@ async def get_weather(message: types.Message):
 
             
     except:
-        await message.replay("Проверь название города!")
+        await message.reply("Проверь название города!")
 
 
 
